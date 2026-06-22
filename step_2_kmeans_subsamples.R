@@ -1,28 +1,5 @@
-########### I created this sub code to iterate for one test. 
-
-library(BITEV2)
-
-output_directory <- "/home/adam/Desktop/Alessio_Marco/datasets/subsamples/TER/"
-setwd("~/Desktop/Alessio_Marco/datasets/subsamples/TER")
-
-# Open the GDS file - 
-gds.in <- bite.open(in.file = "TER.bed", out.dir = output_directory)
-
-gds.path <- gds.in$filename
-
-# Kmean Subsampling Method
-
-subset.gds <- bite.kmeans.sampling(gds.path, out.dir = output_directory, n.iter = 100, n.subsample = 30)
-gds_samples <- bite.getdata("bite_km_subsample.gds", "sample.id")
-length(gds_samples)
-write.table(gds_samples,
-            "TER.txt",
-            quote = FALSE,
-            row.names = FALSE,
-            col.names = FALSE)
-
 ######################################################################################################################
-# I used GPT for the second part for iterating over dirs
+# GPT was utilized for code debug.
 
 library(BITEV2)
 
@@ -196,3 +173,51 @@ for (id in ids_above_30) {
   system(sys_cmd)
   cat("\n\n")
 }
+
+# Kmeans Subsampling:
+
+# [1] "/home/adam/Desktop/Alessio_Marco/datasets_v2/data_analysis"
+
+library(BITEV2)
+
+for (id in ids_above_30) {
+ 
+  current_dir <- getwd()
+  output_directory <- paste0(current_dir,"/",id)
+  setwd(output_directory)
+  
+  if (dir.exists("../all_subsets") == FALSE){
+    dir.create("../all_subsets")
+  }
+  
+  gds.in <- bite.open(in.file = paste0(id,".bed"), out.dir = output_directory) 
+  gds.path <- gds.in$filename
+  
+  subset.gds <- bite.kmeans.sampling(gds.path, out.dir = output_directory, n.iter = 100, n.subsample = 30)
+  gds_samples <- bite.getdata("bite_km_subsample.gds", "sample.id")
+  write.table(gds_samples, paste0("../all_subsets/sub_",id,".txt"),
+              quote = FALSE,
+              row.names = FALSE,
+              col.names = FALSE
+              )
+  }
+
+
+
+
+# Open the GDS file - 
+
+
+gds.path <- gds.in$filename
+gds.path
+
+# Kmean Subsampling Method
+
+subset.gds <- bite.kmeans.sampling(gds.path, out.dir = output_directory, n.iter = 100, n.subsample = 30)
+gds_samples <- bite.getdata("bite_km_subsample.gds", "sample.id")
+length(gds_samples)
+write.table(gds_samples,
+            "../all_subsets/sub_ALG.txt",
+            quote = FALSE,
+            row.names = FALSE,
+            col.names = FALSE)
