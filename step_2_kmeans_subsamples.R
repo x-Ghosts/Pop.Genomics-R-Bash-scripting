@@ -22,7 +22,7 @@ write.table(gds_samples,
             col.names = FALSE)
 
 ######################################################################################################################
-# Minor GPT enhancements on code
+# I used GPT for the second part for iterating over dirs
 
 library(BITEV2)
 
@@ -58,7 +58,7 @@ for (id in ids_above_30) {
   output_missingness_file <- file.path(output_stats_folder,"missingness")
   
   
-  sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --missing --out %s", shQuote(output_plink_id), shQuote(output_missingness_file))
+  sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --missing --out %s", shQuote(bfile_plink), shQuote(output_missingness_file))
   cat("Current ID processing: ", id,"\n" )
   system(sys_cmd)
   cat("\n\n")
