@@ -106,3 +106,93 @@ for (id in ids_above_30) {
   cat("Plot processed for Fam ID: ", id,"\n" )
   cat("\n\n")
 }
+
+
+# Geno / Mind - 0.05
+
+for (id in ids_above_30) {
+  
+  id_path <- file.path(dir_out, id)
+  bfile_plink <- file.path(id_path, id)
+  
+  geno <- 0.05
+  mind <- 0.05
+  
+  sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --geno %s --mind %s --make-bed --out %s", shQuote(bfile_plink), shQuote(geno), shQuote(mind), shQuote(bfile_plink))
+  cat("Current ID processing: ", id,"\n" )
+  system(sys_cmd)
+  cat("\n\n")
+}
+
+# Statistics on Frequency - MAC / MAF
+
+for (id in ids_above_30) {
+  
+  id_path <- file.path(dir_out, id)
+  bfile_plink <- file.path(id_path, id)
+  
+  # Statistics
+  output_stats_folder <- file.path(id_path, "frequency")
+  dir.create(output_stats_folder, recursive = T)
+  output_missingness_file <- file.path(output_stats_folder,"frequency")
+  
+  
+  sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --freq --out %s", shQuote(bfile_plink), shQuote(output_missingness_file))
+  cat("Current ID processing: ", id,"\n" )
+  system(sys_cmd)
+  cat("\n\n")
+}
+
+# Plotting Minor Allele Frequencies
+
+for (id in ids_above_30) {
+  
+  id_path <- file.path(dir_out, id)
+  bfile_plink <- file.path(id_path, id)
+  output_stats_folder <- file.path(id_path, "frequency")
+  output_missingness_file <- file.path(output_stats_folder,"frequency")
+  
+  freq_file <- file.path(paste0(output_missingness_file,".frq"))
+  
+  frq <-read.table(freq_file, header = TRUE, stringsAsFactors = FALSE)
+  
+  plot_output_folder <- file.path(id_path, "plots")
+  dir.create(plot_output_folder, recursive = T)
+  plot_file <- file.path(plot_output_folder, "maf.png")
+  
+  png(plot_file,
+      width = 2400,
+      height = 1200,
+      res = 300)
+  
+  par(
+    mfrow = c(1,1),
+    cex.main = 1.2,
+    cex.lab = 1.0,
+    cex.axis = 0.9,
+    mar = c(5,5,3,1)
+  )
+  
+  hist(frq$MAF, main = "Histogram of Minor Allele Frequency - 0.05", xlab = "Frequency of the Minor Allele observed", xlim = c(0,0.5), col = "green", breaks = 50)
+  abline(v=c(0,0.01,0.02,0.05), col="blue", lwd=2, lty=3)
+  
+  dev.off()
+  
+  cat("Plot processed for Fam ID: ", id,"\n" )
+  cat("\n\n")
+}
+
+# MAF - 0.001
+
+for (id in ids_above_30) {
+  
+  id_path <- file.path(dir_out, id)
+  bfile_plink <- file.path(id_path, id)
+  
+  maf <- 0.001
+  
+  sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --maf %s --make-bed --out %s", shQuote(bfile_plink), shQuote(maf), shQuote(bfile_plink))
+  cat("Current ID processing: ", id,"\n" )
+  system(sys_cmd)
+  cat("\n\n")
+}
