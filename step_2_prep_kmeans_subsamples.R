@@ -1,13 +1,13 @@
 ######################################################################################################################
-# GPT was utilized for code debug.
+# I used GPT for the second part for iterating over dirs
 
 library(BITEV2)
 
-ids_above_30 <- read.table("above_30.txt", stringsAsFactors = F)[[1]]
+ids_above_50 <- read.table("above_50.txt", stringsAsFactors = F)[[1]]
 dir_out <- "subsamples"
 dir.create("subsamples", showWarnings = FALSE)
 
-for (id in ids_above_30) {
+for (id in ids_above_50) {
   
   id_path <- file.path(dir_out, id)
   dir.create(id_path, recursive = T)
@@ -24,7 +24,7 @@ for (id in ids_above_30) {
 
 # Statistics on Missingness
 
-for (id in ids_above_30) {
+for (id in ids_above_50) {
   
   id_path <- file.path(dir_out, id)
   bfile_plink <- file.path(id_path, id)
@@ -43,7 +43,7 @@ for (id in ids_above_30) {
 
 # Plotting Missingness
 
-for (id in ids_above_30) {
+for (id in ids_above_50) {
   
   id_path <- file.path(dir_out, id)
   bfile_plink <- file.path(id_path, id)
@@ -87,7 +87,7 @@ for (id in ids_above_30) {
 
 # Geno / Mind - 0.05
 
-for (id in ids_above_30) {
+for (id in ids_above_50) {
   
   id_path <- file.path(dir_out, id)
   bfile_plink <- file.path(id_path, id)
@@ -103,7 +103,7 @@ for (id in ids_above_30) {
 
 # Statistics on Frequency - MAC / MAF
 
-for (id in ids_above_30) {
+for (id in ids_above_50) {
   
   id_path <- file.path(dir_out, id)
   bfile_plink <- file.path(id_path, id)
@@ -122,7 +122,7 @@ for (id in ids_above_30) {
 
 # Plotting Minor Allele Frequencies
 
-for (id in ids_above_30) {
+for (id in ids_above_50) {
   
   id_path <- file.path(dir_out, id)
   bfile_plink <- file.path(id_path, id)
@@ -161,7 +161,7 @@ for (id in ids_above_30) {
 
 # MAF - 0.001
 
-for (id in ids_above_30) {
+for (id in ids_above_50) {
   
   id_path <- file.path(dir_out, id)
   bfile_plink <- file.path(id_path, id)
@@ -173,51 +173,3 @@ for (id in ids_above_30) {
   system(sys_cmd)
   cat("\n\n")
 }
-
-# Kmeans Subsampling:
-
-# [1] "/home/adam/Desktop/Alessio_Marco/datasets_v2/data_analysis"
-
-library(BITEV2)
-
-for (id in ids_above_30) {
- 
-  current_dir <- getwd()
-  output_directory <- paste0(current_dir,"/",id)
-  setwd(output_directory)
-  
-  if (dir.exists("../all_subsets") == FALSE){
-    dir.create("../all_subsets")
-  }
-  
-  gds.in <- bite.open(in.file = paste0(id,".bed"), out.dir = output_directory) 
-  gds.path <- gds.in$filename
-  
-  subset.gds <- bite.kmeans.sampling(gds.path, out.dir = output_directory, n.iter = 100, n.subsample = 30)
-  gds_samples <- bite.getdata("bite_km_subsample.gds", "sample.id")
-  write.table(gds_samples, paste0("../all_subsets/sub_",id,".txt"),
-              quote = FALSE,
-              row.names = FALSE,
-              col.names = FALSE
-              )
-  }
-
-
-
-
-# Open the GDS file - 
-
-
-gds.path <- gds.in$filename
-gds.path
-
-# Kmean Subsampling Method
-
-subset.gds <- bite.kmeans.sampling(gds.path, out.dir = output_directory, n.iter = 100, n.subsample = 30)
-gds_samples <- bite.getdata("bite_km_subsample.gds", "sample.id")
-length(gds_samples)
-write.table(gds_samples,
-            "../all_subsets/sub_ALG.txt",
-            quote = FALSE,
-            row.names = FALSE,
-            col.names = FALSE)
