@@ -1,6 +1,16 @@
 ######################################################################################################################
 # I used GPT for the second part for iterating over dirs
 
+
+# Respective DIRS: .../datanalysis/
+#                                .../subsamples/
+#                                              .../ID_1/
+#                                              .../ID_2/
+#                                              .../ID_3/
+#                                              .../all_subsets/
+# Make sure to respect the DIRS
+
+
 library(BITEV2)
 
 ids_above_50 <- read.table("above_50.txt", stringsAsFactors = F)[[1]]
