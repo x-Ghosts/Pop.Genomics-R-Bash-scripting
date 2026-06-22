@@ -40,3 +40,21 @@ for (id in ids_above_50) {
   }
 
 
+# Extracting subsamling and preparing the outliers removal
+
+setwd("/home/adam/Desktop/Alessio_Marco/datasets_v2/data_analysis/subsamples/")
+system("cp */*.fam all_subsets/")
+system("cat all_subsets/*.fam > all_subsets/all_samples.fam")
+system("cat all_subsets/*.txt > all_subsets/all_subsamples.fam")
+
+all_samples <- read.table("all_subsets/all_samples.fam", header = F, sep = " ", stringsAsFactors = F)
+all_subsamples <- read.table("all_subsets/all_subsamples.fam", header = F, sep = " ", stringsAsFactors = F)
+
+all_samples <- all_samples %>%
+  filter(!V2 %in% all_subsamples$V1)
+
+outliers_kmeans_samples <- write.table(all_samples, "OUTLIERS_kmeans.txt", quote = F, row.names = F, col.names = F)
+outliers_kmeans_samples_file <- file.path(getwd(),paste("OUTLIERS_kmeans.txt"))
+
+sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile ../target_dataset_capre --remove %s --make-bed --out ../target_dataset_capre", shQuote(outliers_kmeans_samples_file))
+system(sys_cmd)
