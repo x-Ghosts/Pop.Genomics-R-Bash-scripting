@@ -50,11 +50,28 @@ for (id in ids_above_50) {
   }
 
 
+# Extracting *.FAM.ORIG to extract the outlier-bad-data-quality
+setwd("/home/adam/Desktop/Alessio_Marco/datasets_v2/data_analysis/")
+dir_out <- "subsamples"
+
+for (id in ids_above_50) {
+  
+  id_path <- file.path(dir_out, id)
+  keep_fam_file <- file.path(id_path, paste0(id, ".txt"))
+  orig_fam_output <- file.path(id_path, paste0(id, ".FAM.ORIG"))
+  sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile target_dataset_capre --keep-fam %s --make-bed --out %s", shQuote(keep_fam_file), shQuote(orig_fam_output))
+  cat("Current ID processing: ", id,"\n" )
+  system(sys_cmd)
+  cat("\n\n")
+   
+}
+
+
 # Extracting subsamling and preparing the outliers removal
 
 setwd("/home/adam/Desktop/Alessio_Marco/datasets_v2/data_analysis/subsamples/")
-system("cp */*.fam all_subsets/")
-system("cat all_subsets/*.fam > all_subsets/all_samples.fam")
+system("cp */*.FAM.ORIG.fam all_subsets/")
+system("cat all_subsets/*.FAM.ORIG.fam > all_subsets/all_samples.fam")
 system("cat all_subsets/*.txt > all_subsets/all_subsamples.fam")
 
 all_samples <- read.table("all_subsets/all_samples.fam", header = F, sep = " ", stringsAsFactors = F)
@@ -68,3 +85,4 @@ outliers_kmeans_samples_file <- file.path(getwd(),paste("OUTLIERS_kmeans.txt"))
 
 sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile ../target_dataset_capre --remove %s --make-bed --out ../target_dataset_capre", shQuote(outliers_kmeans_samples_file))
 system(sys_cmd)
+
