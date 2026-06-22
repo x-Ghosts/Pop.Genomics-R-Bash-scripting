@@ -1,4 +1,14 @@
 library(BITEV2)
+library(dplyr)
+
+# Respective DIRS: .../datanalysis/
+#                                .../subsamples/
+#                                              .../ID_1/
+#                                              .../ID_2/
+#                                              .../ID_3/
+#                                              .../all_subsets/
+# Make sure to respect the DIRS
+
 
 setwd("/home/adam/Desktop/Alessio_Marco/datasets_v2/data_analysis/")
 
