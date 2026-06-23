@@ -100,4 +100,30 @@ abline(v = c(2, 5, 10), col = "red", lwd = 2, lty = 3)
 
 dev.off()
 
+# Allele Frequency - Statistics: Estimation of Minor Allele Counts
+
+maf <- 0.05
+
+output_stats_folder <- file.path(current_dir, "frequency")
+dir.create(output_stats_folder, recursive = T)
+output_frequency_file <- file.path(output_stats_folder,"frequency")
+
+sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --freq --out %s", shQuote(plink_data), shQuote(output_frequency_file))
+system(sys_cmd)
+
+freq_file <- file.path(paste0(output_frequency_file,".frq"))
+plot_file <- file.path(plot_output_folder, "maf_gm002.png")
+frq <-read.table(freq_file, header = TRUE, stringsAsFactors = FALSE)
+
+png(plot_file, width = 2400, height = 1200, res = 300)
+par( mfrow = c(1,1), cex.main = 1.2, cex.lab = 1.0, cex.axis = 0.9, mar = c(5,5,3,1))
+
+hist(frq$MAF, main = "Histogram of Minor Allele Frequency - 0.05", xlab = "Frequency of the Minor Allele observed", xlim = c(0,0.5), col = "green", breaks = 50)
+abline(v=c(0,0.01,0.02,0.05), col="blue", lwd=2, lty=3)
+dev.off()
+
+sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --maf %s --make-bed --out %s", shQuote(plink_data), shQuote(maf), shQuote(plink_data))
+system(sys_cmd)
+
+
 
