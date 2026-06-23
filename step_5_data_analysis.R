@@ -136,3 +136,44 @@ system(test_cmd) # In our dataset case, we removed 14 variants.
 
 sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --hwe %s --make-bed --out %s", shQuote(plink_data), shQuote(hwe), shQuote(plink_data))
 system(sys_cmd) 
+
+# Linkage Disequilibrium Pruning (TO BE RELEASED LATER)
+
+
+# Identity by Descent - (Checking for duplicates samples)
+
+output_genome_folder <- file.path(current_dir, "genome")
+dir.create(output_genome_folder, recursive = T)
+output_genome_file <- file.path(output_genome_folder,"genome")
+output_missingness_file <- file.path(callrate_path,"missingness_gmm")
+
+sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --genome full --out %s", shQuote(plink_data), shQuote(output_genome_file))
+system(sys_cmd)
+sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --missing --out %s", shQuote(plink_data), shQuote(output_missingness_file))
+system(sys_cmd) #Very important to extract the best individuals with the lowest missing frequency
+
+genome_file <- file.path(paste0(output_genome_file,".genome"))
+ind_missing_file <- file.path(paste0(output_missingness_file,".imiss"))
+plot_file <- file.path(plot_output_folder, "genome.png")
+
+genome <-read.table(genome_file, header = TRUE, stringsAsFactors = FALSE)
+ind_imiss <- read.table(ind_missing_file, header = TRUE, stringsAsFactors = FALSE)
+hist(genome$PI_HAT, ylab = "Number of Pairs IID1 & IID2 observed", xlab = "IBD Proportions - Z2 + 0.5*Z1", main = "Identity By Descent - Pairwise distance sharings between individuals at the genome scale - Autosomes only", col = "yellow", xlim = c(0,1))
+duplicates_samples <- genome %>%
+  filter(PI_HAT >= 0.99)
+duplicates_samples$missing_IID1 <- ind_imiss$F_MISS[match(duplicates_samples$IID1, ind_imiss$IID)]
+duplicates_samples$missing_IID2 <- ind_imiss$F_MISS[match(duplicates_samples$IID2, ind_imiss$IID)]
+duplicates_samples <- duplicates_samples %>%
+  relocate(missing_IID1, .after = IID1) %>%
+  relocate(missing_IID2, .after = IID2) %>%
+  mutate(remove_indiv = ifelse(missing_IID1 > missing_IID2, IID1, IID2)) %>%
+  relocate(remove_indiv, .after = PI_HAT)
+duplicates_samples <- duplicates_samples %>%
+  select(FID1,remove_indiv)
+write.table(duplicates_samples, "duplicate_samples.txt", sep = " ", quote = F, row.names = F, col.names = F)
+
+remove_duplicates_file <- file.path(current_dir,"duplicate_samples.txt")
+sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --remove %s --make-bed --out %s", shQuote(plink_data), shQuote(remove_duplicates_file), shQuote(plink_data))
+system(sys_cmd) #Very important to extract the best individuals with the lowest missing frequency
+
+
