@@ -160,3 +160,7 @@ print(p)
 
 path_PCA_component <- file.path(paste0(plot_output_folder, "/comp_PCA_", pc1, "_", pc2, ".png"))
 ggsave(path_PCA_component, plot = p, width = 16, height = 8, dpi = 300)
+
+
+# Removal temp data
+system("rm *~")
