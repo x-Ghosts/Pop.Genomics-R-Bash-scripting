@@ -126,4 +126,13 @@ sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr -
 system(sys_cmd)
 
 
+# Hardy-Weinberg Equilibrium test - (Applied in the total dataset to look for extreme artifact outliers - RECOMMENDED TO APPLY PER POPULATION)
 
+hwe <- 1e-4
+# ---> Evaluate the results in the test_result via the console. If variants removal is empirically logic, proceed to apply in the final dataset, otherwise skip to the next step:
+test_file <- "test_plink"
+test_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --hwe %s --make-bed --out %s", shQuote(plink_data), shQuote(hwe), shQuote(test_file))
+system(test_cmd) # In our dataset case, we removed 14 variants.
+
+sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --hwe %s --make-bed --out %s", shQuote(plink_data), shQuote(hwe), shQuote(plink_data))
+system(sys_cmd) 
