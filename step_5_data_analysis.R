@@ -137,7 +137,7 @@ system(test_cmd) # In our dataset case, we removed 14 variants.
 sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --hwe %s --make-bed --out %s", shQuote(plink_data), shQuote(hwe), shQuote(plink_data))
 system(sys_cmd) 
 
-# Linkage Disequilibrium Pruning (TO BE RELEASED LATER)
+#  Linkage Disequilibrium Pruning (TO BE RELEASED LATER)
 
 
 # Identity by Descent - (Checking for duplicates samples)
@@ -158,7 +158,12 @@ plot_file <- file.path(plot_output_folder, "genome.png")
 
 genome <-read.table(genome_file, header = TRUE, stringsAsFactors = FALSE)
 ind_imiss <- read.table(ind_missing_file, header = TRUE, stringsAsFactors = FALSE)
+
+png(plot_file, width = 2400, height = 1200, res = 300)
+par( mfrow = c(1,1), cex.main = 0.9, cex.lab = 0.9, cex.axis = 0.8, mar = c(5,5,3,1))
 hist(genome$PI_HAT, ylab = "Number of Pairs IID1 & IID2 observed", xlab = "IBD Proportions - Z2 + 0.5*Z1", main = "Identity By Descent - Pairwise distance sharings between individuals at the genome scale - Autosomes only", col = "yellow", xlim = c(0,1))
+dev.off()
+
 duplicates_samples <- genome %>%
   filter(PI_HAT >= 0.99)
 duplicates_samples$missing_IID1 <- ind_imiss$F_MISS[match(duplicates_samples$IID1, ind_imiss$IID)]
@@ -175,5 +180,3 @@ write.table(duplicates_samples, "duplicate_samples.txt", sep = " ", quote = F, r
 remove_duplicates_file <- file.path(current_dir,"duplicate_samples.txt")
 sys_cmd <- sprintf("plink --cow --allow-no-sex --nonfounders --allow-extra-chr --bfile %s --remove %s --make-bed --out %s", shQuote(plink_data), shQuote(remove_duplicates_file), shQuote(plink_data))
 system(sys_cmd) #Very important to extract the best individuals with the lowest missing frequency
-
-
