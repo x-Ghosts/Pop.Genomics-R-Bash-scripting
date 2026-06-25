@@ -2,7 +2,8 @@ library(BITEV2)
 library(tidyverse)
 library(RCircos)
 
-admixture_folder_name <- "admixture_analysis"
+current_dir <- getwd()
+admixture_folder_name <- path.file(current_dir,) #
 dataset_name <- "target_dataset_capre"
 min_k <- 2
 max_k <- 20
@@ -26,9 +27,9 @@ pop_file_txt <- read.table(paste0(admixture_folder_name,"/","target_mediterra_re
 membercoeff.cv(in.file = "log", out.file=paste0("Plot_",min_k,"_", max_k), software="Admixture", 
                minK=min_k, maxK=max_k, plot.format="pdf", plot.width=50, plot.height=40)
 
-# Admixture plot
-membercoeff.plot(in.file = dataset_name, out.file = "plot_", software = "Admixture",
-                 maxK = 10, plot.main = "Admixture Plot", plot.format = "pdf", pop.order.file = "ordered_sorted.txt")
+# Admixture plot (Horizontal Plot)
+membercoeff.plot(in.file = dataset_name, out.file = "Plot_", software = "Admixture",
+                 maxK = 10, plot.main = "Admixture Plot", plot.format = "pdf", pop.order.file = pop_file_txt)
 
 # Admixture Circos plot
 membercoeff.circos(in.file = "merged_wild_domestic", out.file = "plot_circular_2_20_sorted", software = "Admixture",
