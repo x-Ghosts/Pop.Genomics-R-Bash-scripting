@@ -1,10 +1,16 @@
 #################################################################################
 cat("****** Checking OS Systems dependencies (Currently Linux - deb)\n\n")
-
-
-print("Update/Install missing system packages by pasting the commands: ")
-cat("sudo apt install libgsl-dev libboost-all-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libwebp-dev")
-
+warning(
+  paste(
+    "Update/Install missing system packages by pasting the commands:",
+    "sudo apt install libgsl-dev libboost-all-dev",
+    "libfontconfig1-dev libharfbuzz-dev",
+    "libfribidi-dev libfreetype6-dev",
+    "libpng-dev libtiff5-dev",
+    "libjpeg-dev libwebp-dev",
+    sep = "\n"
+  )
+)
 
 #################################################################################
 
@@ -89,12 +95,13 @@ if(length(missing_packages) > 0){
     if(pkg=="BITEV2"){
       if (!requireNamespace("devtools", quietly = TRUE)) {
         install.packages('pkgdown')
+        install.packages('poolfstat')
         install.packages("devtools")
         library(devtools)
       }
       if (!require("BiocManager", quietly = TRUE))
         install.packages("BiocManager")
-      BiocManager::install("SNPRelate")
+      BiocManager::install("SNPRelate", force = TRUE)
       library(devtools)
       url <- paste0(
         "https://raw.githubusercontent.com/",
@@ -118,9 +125,20 @@ if(length(missing_packages) > 0){
     }
   }
   
-  stop(
-    "\nInstall the missing R packages and rerun the script to check for any missing packages."
-  )
+  missing_recheck <- packages[
+    !sapply(packages, requireNamespace, quietly = TRUE)
+  ]
+  
+  if (length(missing_recheck) > 0) {
+    
+    cat("\nThe following packages are still missing:\n")
+    cat(paste0(" - ", missing_recheck), sep = "\n")
+    
+    stop(
+      "\nInstall the missing R packages manually and rerun the script."
+    )
+    
+  }
   
 } else {
   
