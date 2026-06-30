@@ -36,12 +36,18 @@ if (length(missing_soft) > 0) {
       cat("  sudo cp plink /usr/local/bin/\n\n")
     } else if (prg == "admixture") {
       cat("- Install ADMIXTURE:\n")
-      cat("  Download: https://dalexander.github.io/admixture/download.html\n")
+      cat("  Download: https://dalexander.github.io/admixture/binaries/admixture_linux-1.4.0.tar.gz\n")
       cat("  Extract it, then copy the binary:\n")
       cat("  sudo cp admixture /usr/local/bin/\n\n")
     } else if (prg == "treemix") {
       cat("- Install TreeMix:\n")
-      cat("  conda install -c bioconda treemix\n\n")
+      cat("  Download: https://bitbucket.org/nygcresearch/treemix/downloads/treemix-1.13.tar.gz\n")
+      cat("  Extract it, then follow the steps:\n")
+      cat("  1- sudo apt-get install libgsl-dev\ and sudo apt install libboost-all-devn\n")
+      cat("  2- cd PATH_OF_EXTRACTED_TREEMIX\n")
+      cat("  3- sudo ./configure\n")
+      cat("  4- sudo make\n")
+      cat("  5- sudo make install\n\n")
     } else {
       cat("- Missing:", prg, "\n")
       cat("  Please install it and ensure it is available in your environment PATH.\n\n")
