@@ -1,4 +1,12 @@
 #################################################################################
+cat("****** Checking OS Systems dependencies (Currently Linux - deb)\n\n")
+
+
+print("Update/Install missing system packages by pasting the commands: ")
+cat("sudo apt install libgsl-dev libboost-all-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev libwebp-dev")
+
+
+#################################################################################
 
 cat("****** Checking installed softwares\n\n")
 
@@ -43,11 +51,10 @@ if (length(missing_soft) > 0) {
       cat("- Install TreeMix:\n")
       cat("  Download: https://bitbucket.org/nygcresearch/treemix/downloads/treemix-1.13.tar.gz\n")
       cat("  Extract it, then follow the steps:\n")
-      cat("  1- sudo apt-get install libgsl-dev\ and sudo apt install libboost-all-devn\n")
-      cat("  2- cd PATH_OF_EXTRACTED_TREEMIX\n")
-      cat("  3- sudo ./configure\n")
-      cat("  4- sudo make\n")
-      cat("  5- sudo make install\n\n")
+      cat("  1- cd PATH_OF_EXTRACTED_TREEMIX\n")
+      cat("  2- sudo ./configure\n")
+      cat("  3- sudo make\n")
+      cat("  4- sudo make install\n\n")
     } else {
       cat("- Missing:", prg, "\n")
       cat("  Please install it and ensure it is available in your environment PATH.\n\n")
@@ -57,4 +64,66 @@ if (length(missing_soft) > 0) {
 } else {
   cat("Softwares installed in your system are compatible with future scripts.\n")
   cat("Test the R package dependencies next.\n")
+}
+
+
+#################################################################################
+
+cat("****** Checking installed R packages\n\n")
+
+packages <- c(
+  "BITEV2",
+  "tidyverse",
+  "dplyr",
+  "RCircos"
+)
+
+missing_packages <- packages[
+  !sapply(packages, requireNamespace, quietly = TRUE)
+]
+
+
+if(length(missing_packages) > 0){
+  cat("\nMissing R packages:\n\n")
+  for(pkg in missing_packages){
+    if(pkg=="BITEV2"){
+      if (!requireNamespace("devtools", quietly = TRUE)) {
+        install.packages('pkgdown')
+        install.packages("devtools")
+        library(devtools)
+      }
+      if (!require("BiocManager", quietly = TRUE))
+        install.packages("BiocManager")
+      BiocManager::install("SNPRelate")
+      library(devtools)
+      url <- paste0(
+        "https://raw.githubusercontent.com/",
+        "marcomilanesi/BITE/master/",
+        "BITEV2_2.1.2.tar.gz"
+      )
+      
+      tmp <- tempfile(fileext = ".tar.gz")
+      
+      download.file(
+        url,
+        tmp,
+        mode = "wb"
+      )
+      
+      devtools::install_local(tmp)
+      
+      unlink(tmp)
+    } else {
+      install.packages(pkg)
+    }
+  }
+  
+  stop(
+    "\nInstall the missing R packages and rerun the script to check for any missing packages."
+  )
+  
+} else {
+  
+  cat("[OK] All required R packages are installed.\n")
+  
 }
